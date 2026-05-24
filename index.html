@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Proyección Estudiantil | ETITC 2027 - 2035</title>
+
+<!-- ============================================================
+     ESCUELA TECNOLÓGICA INSTITUTO TÉCNICO CENTRAL - ETITC
+     Dashboard Gerencial - Proyección Estudiantil 2027-2035
+     OAPDI - Oficina Asesora de Planeación y Desarrollo Institucional
+     ============================================================ -->
+
+<!-- Tipografías corporativas -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Librerías de visualización -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
+
+<style>
+/* =====================================================
+   1. VARIABLES Y RESET
+   ===================================================== */
+:root {
+  /* Paleta corporativa ETITC (extraída del HTML base) */
+  --bg-primary: #0f1424;
+  --bg-secondary: #1a1f3a;
+  --bg-tertiary: #232a4a;
+  --bg-glass: rgba(255, 255, 255, 0.04);
+  --bg-glass-strong: rgba(255, 255, 255, 0.07);
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  /* Acentos corporativos */
+  --accent-neon: #39FF14;
+  --accent-cyan: #0099cc;
+  --accent-gold: #ffcc00;
+  --accent-green: #00aa66;
+  --accent-red: #ff6b6b;
+
+  /* Colores por nivel académico */
+  --nivel-tecnico: #3DB5AB;
+  --nivel-tecnologico: #4A90D9;
+  --nivel-pregrado: #F5A623;
+  --nivel-especializacion: #9B59B6;
+  --nivel-maestria: #E74C3C;
+  --nivel-doctorado: #64B5F6;
+
+  /* Texto */
+  --text-primary: #ffffff;
+  --text-secondary: #c5cae0;
+  --text-muted: #8590b3;
+  --text-faint: #5a6285;
+
+  /* Tipografía */
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Espaciado y bordes */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 28px rgba(57, 255, 20, 0.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: var(--font-display);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fondo decorativo institucional */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(57, 255, 20, 0.07), transparent 40%),
+    radial-gradient(circle at 88% 82%, rgba(0, 153, 204, 0.10), transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(245, 166, 35, 0.04), transparent 60%),
+    linear-gradient(135deg, #0a0d1c 0%, #131732 50%, #0f1424 100%);
+  z-index: -2;
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* =====================================================
+   2. ENCABEZADO INSTITUCIONAL
+   ===================================================== */
+.app-header {
+  padding: 28px 40px 22px;
+  background: linear-gradient(180deg, rgba(15, 20, 36, 0.95) 0%, rgba(15, 20, 36, 0.7) 100%);
+  border-bottom: 1px solid var(--border-soft);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.brand img {
+  height: 64px;
+  width: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+.brand-text h1 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  background: linear-gradient(90deg, #ffffff, var(--accent-neon));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.brand-text p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.header-meta .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 6px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.header-meta .badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-neon);
+  box-shadow: 0 0 8px var(--accent-neon);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+.header-meta .dept {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  letter-spacing: 0.04em;
+}
+
+.title-block {
+  margin-top: 26px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.title-block h2 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.title-block h2 .accent {
+  background: linear-gradient(90deg, var(--accent-neon), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.title-block .sub {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  max-width: 540px;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+/* =====================================================
+   3. CONTENEDOR PRINCIPAL
+   ===================================================== */
+.container {
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 30px 40px 60px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 36px 0 20px;
+  font-size: 0.78rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.section-title::before {
+  content: "";
+  width: 6px;
+  height: 22px;
+  background: linear-gradient(180deg, var(--accent-neon), var(--accent-cyan));
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+}
+.section-title .meta {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+}
+
+/* =====================================================
+   4. FILTROS GLOBALES
+   ===================================================== */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 18px 22px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(16px);
+  margin-bottom: 28px;
+}
+.filter-bar label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.filter-bar select {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.filter-bar select:hover { border-color: var(--accent-neon); }
+.filter-bar select:focus { outline: none; box-shadow: 0 0 0 2px rgba(57, 255, 20, 0.25); }
+
+.chip-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.chip {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+.chip:hover {
+  border-color: var(--accent-neon);
+  color: var(--accent-neon);
+}
+.chip.active {
+  background: linear-gradient(135deg, var(--accent-neon), var(--accent-cyan));
+  color: #0a0d1c;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(57, 255, 20, 0.35);
+}
+
+/* =====================================================
+   5. KPI CARDS
+   ===================================================== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.kpi-card {
+  position: relative;
+  padding: 22px 24px 20px;
+  background: var(--bg-glass-strong);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: help;
+}
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--card-accent, var(--accent-neon));
+  opacity: 0.85;
+}
+.kpi-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, var(--card-accent, var(--accent-neon)) 0%, transparent 60%);
+  opacity: 0.06;
+  pointer-events: none;
+}
+.kpi-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-accent, var(--accent-neon));
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--card-accent, var(--accent-neon));
+}
+.kpi-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.kpi-label .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--card-accent, var(--accent-neon));
+  box-shadow: 0 0 8px var(--card-accent, var(--accent-neon));
+}
+.kpi-value {
+  font-family: var(--font-display);
+  font-size: 2.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+.kpi-unit {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-left: 4px;
+}
+.kpi-delta {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-neon);
+  font-weight: 600;
+}
+.kpi-delta.neutral { color: var(--text-muted); }
+.kpi-desc {
+  font-size: 0.74rem;
+  color: var(--text-faint);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* =====================================================
+   6. PANELES (Cards de gráficos)
+   ===================================================== */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.grid-2-eq {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1100px) {
+  .grid-2, .grid-2-eq, .grid-3 { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--bg-glass-strong);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  gap: 12px;
+}
+.panel-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+.panel-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.4;
+}
+.panel-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(57, 255, 20, 0.18), rgba(0, 153, 204, 0.18));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  flex-shrink: 0;
+}
+.panel-icon svg { width: 18px; height: 18px; stroke: var(--accent-neon); fill: none; stroke-width: 2; }
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 320px;
+}
+.chart-container.tall { height: 400px; }
+.chart-container.short { height: 240px; }
+
+/* =====================================================
+   7. TABLA PIVOT (programa x vigencia)
+   ===================================================== */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-soft);
+}
+.pivot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  min-width: 1200px;
+}
+.pivot-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 12px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--border-strong);
+}
+.pivot-table thead th:first-child {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+.pivot-table tbody td {
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--border-soft);
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+.pivot-table tbody td:first-child {
+  text-align: left;
+  font-family: var(--font-display);
+  color: var(--text-secondary);
+  position: sticky;
+  left: 0;
+  background: var(--bg-secondary);
+  font-weight: 500;
+  max-width: 280px;
+  white-space: normal;
+}
+.pivot-table tbody tr.nivel-header td {
+  background: rgba(57, 255, 20, 0.06);
+  font-weight: 700;
+  color: var(--accent-neon);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.pivot-table tbody tr.nivel-header td:first-child {
+  background: rgba(57, 255, 20, 0.10);
+  color: var(--accent-neon);
+}
+.pivot-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+.pivot-table tbody tr.total-row td {
+  font-weight: 700;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+.pivot-table tbody tr.total-row td:first-child { background: var(--bg-tertiary); }
+.cell-empty { color: var(--text-faint); }
+.cell-heat-1 { color: #ffffff; background: rgba(57, 255, 20, 0.04); }
+.cell-heat-2 { color: #ffffff; background: rgba(57, 255, 20, 0.10); }
+.cell-heat-3 { color: #ffffff; background: rgba(57, 255, 20, 0.18); }
+.cell-heat-4 { color: #ffffff; background: rgba(57, 255, 20, 0.28); }
+.cell-heat-5 { color: #0a0d1c; background: rgba(57, 255, 20, 0.55); font-weight: 600; }
+
+/* =====================================================
+   8. RANKING (top programas)
+   ===================================================== */
+.ranking {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rank-item {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+.rank-item:hover { border-color: var(--rank-color, var(--accent-neon)); transform: translateX(4px); }
+.rank-num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--rank-color, var(--accent-neon));
+}
+.rank-body { min-width: 0; }
+.rank-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+.rank-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.rank-meta .badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--rank-color, var(--accent-neon));
+  color: #0a0d1c;
+  font-weight: 600;
+  font-size: 0.65rem;
+}
+.rank-value {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* =====================================================
+   9. INSIGHTS / NARRATIVA
+   ===================================================== */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.insight {
+  padding: 16px 18px;
+  background: var(--bg-glass);
+  border-left: 3px solid var(--ins-color, var(--accent-neon));
+  border-radius: 10px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.insight strong {
+  color: var(--ins-color, var(--accent-neon));
+  font-weight: 700;
+}
+.insight .lbl {
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* =====================================================
+   10. FOOTER
+   ===================================================== */
+.app-footer {
+  margin-top: 40px;
+  padding: 28px 40px;
+  border-top: 1px solid var(--border-soft);
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+.app-footer strong { color: var(--accent-neon); }
+
+/* =====================================================
+   11. ANIMACIONES DE ENTRADA
+   ===================================================== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal { animation: fadeUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.reveal:nth-child(1) { animation-delay: 0.05s; }
+.reveal:nth-child(2) { animation-delay: 0.10s; }
+.reveal:nth-child(3) { animation-delay: 0.15s; }
+.reveal:nth-child(4) { animation-delay: 0.20s; }
+.reveal:nth-child(5) { animation-delay: 0.25s; }
+.reveal:nth-child(6) { animation-delay: 0.30s; }
+
+/* =====================================================
+   12. TOOLTIPS PERSONALIZADOS (KPIs)
+   ===================================================== */
+.kpi-card[data-tooltip] { position: relative; }
+.kpi-card[data-tooltip]:hover::before { display: none; }
+.kpi-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: #0a0d1c;
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-neon);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  width: max-content;
+  max-width: 280px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+.kpi-card:hover .kpi-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 700px) {
+  .container { padding: 20px; }
+  .app-header { padding: 18px 20px; }
+  .title-block h2 { font-size: 1.6rem; }
+  .kpi-value { font-size: 1.9rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     ENCABEZADO
+     ============================================================ -->
+<header class="app-header">
+  <div class="header-top">
+    <div class="brand">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAENAgADASIAAhEBAxEB/8QAHAABAAIDAQEBAAAAAAAAAAAAAAYHBAUIAwIB/8QASBAAAQMEAQMCAwYDBQUCDwAAAQIDBAAFBhESBxMhIjEUQVEIFSMyYYEWQnEXM0NSkSQlYoKhRLFTV2NkcnODkpOVoqPB0tT/xAAaAQEAAwEBAQAAAAAAAAAAAAAAAgMEAQUG/8QALxEBAAIBAgQEBAUFAAAAAAAAAAECAxESBBMxQQUhYXEiMoGhFCMkwfBRkbHR4f/aAAwDAQACEQMRAD8A7LpSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSoFlfVbHrHOnW2Nb75fLjBOn41ugqIQrQPHuuFDXIAglIXvXy8gEJ7SsOyXODerNCvFskIkwZrCJEd5HsttaQpJH7EVCusGW36wSLHacXctLdzuTrzri7iwt9CIzSPWpKEOIJV3HGU75aAUf0oLBpVc9JswyO83y62HKfut2XGjsy40m3xHI7Tja1OIUgpW44eSFNgk8tacT48ebDkPNR2HH33EttNpK1rUdBKQNkk/TVB90qvsa6v4hen4TDibtaVz3EohG429xpuRzUEtacAKElZKeKFKSs8gCkHYFg0ClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClK8H5sOPKjxX5cdqRJ5dhpbgSt3iNq4g+VaBG9e1B7LUlCFLUQEpGyT8hVRSeuERb7FzteNT5eJJVuTeFq7ay0R4fYjkFbjSfdRVwJSCpCXPG7erna3wDjd4uWFvJSg2lzlCASEhcBwqMdSRv2SApk/wDEyrxoig6GjvNSGG32HUOsuJC23EKCkqSRsEEe4I+dUNcUSI3UTMochISBc25Mf6qZdisnl/8AES8n/lr7wvLL5g1rk4zBxh68wEuKcsziZjbLERtQ2Y7xUStKEr5cC2hYCFJTocaxCLtcspn5Tfnof3hMjMREsQkKSywy0pxSU7UeTi+Ty9rITscQEp0dhMeg9zZhRsgxiTKYbTbJ3xURtTvqTFkjubOz4Ae+ISPkAkAe1aHqndbZdurlhRa7hFnGDYZ4lfDuhwMF2RD7YWU7CSrtOaB9+CvpWlvePWC9raXerHbLmpkENGZEbeKAffXIHW9CsyOxEht9uMzHjtgj0tpCB58DwKDNwa8W60dXIabndI1vbmWWS0yJCwhMhxLzKuKVHxySnmeO9kEnWknUm6/3WM7iEDG2ZrQXkdwbhKCdL7sdIU9ITr/KpppbZP8A5T66qES12yS061LVCebaIDqHSlSUE+ByB9j/AFrCsuL4vaJZn2XHrPAfWjgXokNtpRSdHW0gePA/0oPe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NyrXiSsihzF2dy2pa77KGFpceRDd48U99TDhbKUKUWFqCVKUOeUvp/HnTrBGNomXCyvZa/PuEaXbkxY7barW80opY8aaW6UlQUByW4skEKOwuaNNbflyo6WpCDGKQpxxopbXySFbQo+FAb0SPY+KyErSpIUlQKT7EHwaqK+4quNHyeGxjbi8fVeLWpduhsAJkwGmI6HG0Np0Ftp4epsb5JQpASrfE6xGHxrxLgNwcPfjYk7ljcxqA/DVHQhn7udQ678OrSmW1vKCSgpSVErJTpZKgvEEEbB2KVj2yBBtdvYt1thx4UOOgNsR47YbbaSPZKUjwAPoKyKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBSlKBWNcbfBuTTTU+IzJbafbkNpdQFBLrawttY380qSFA/IgGsmlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlApSlB/9k=" alt="Logo ETITC">
+      <div class="brand-text">
+        <h1>ESCUELA TECNOLÓGICA INSTITUTO TÉCNICO CENTRAL</h1>
+        <p>Establecimiento Público de Educación Superior &middot; Adscrito al MEN</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <span class="badge" id="liveBadge">DASHBOARD EN VIVO</span>
+      <span class="dept">Elaborado por Coordinador Especializaciones &middot; Wilson Ramiro Camargo Cardozo</span>
+    </div>
+  </div>
+
+  <div class="title-block">
+    <div>
+      <h2>Proyección Estudiantil <span class="accent">2027 — 2035</span></h2>
+      <p class="sub">Tablero gerencial e interactivo de la población estudiantil proyectada por programa, nivel académico y vigencia. Insumo estratégico para la toma de decisiones de la alta dirección.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     CONTENIDO PRINCIPAL
+     ============================================================ -->
+<main class="container">
+
+  <!-- Filtros -->
+  <section class="filter-bar reveal">
+    <div class="filter-group">
+      <label>Vigencia activa</label>
+      <select id="filterVigencia"></select>
+    </div>
+    <div class="filter-group">
+      <label>Nivel académico</label>
+      <div class="chip-group" id="filterNivel">
+        <button class="chip active" data-nivel="__ALL__">Todos</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       KPIs - INDICADORES CLAVE
+       ============================================================ -->
+  <h3 class="section-title reveal">Indicadores Estratégicos <span class="meta">según vigencia y nivel filtrados</span></h3>
+
+  <section class="kpi-grid reveal">
+
+    <div class="kpi-card" style="--card-accent: #39FF14;">
+      <div class="kpi-label"><span class="dot"></span>Estudiantes proyectados</div>
+      <div class="kpi-value" id="kpiTotalEstudiantes">—</div>
+      <div class="kpi-delta" id="kpiTotalDelta">—</div>
+      <div class="kpi-desc">Total agregado para la selección actual</div>
+      <div class="kpi-tooltip">Suma de estudiantes proyectados según los filtros activos. Incluye todos los programas dentro del nivel y vigencia seleccionados.</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: #0099cc;">
+      <div class="kpi-label"><span class="dot"></span>Programas activos</div>
+      <div class="kpi-value" id="kpiProgramas">—</div>
+      <div class="kpi-delta neutral" id="kpiProgramasDesc">—</div>
+      <div class="kpi-desc">Programas con población estudiantil proyectada</div>
+      <div class="kpi-tooltip">Número de programas académicos con al menos 1 estudiante proyectado para la vigencia y nivel seleccionados.</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: #ffcc00;">
+      <div class="kpi-label"><span class="dot"></span>Programa líder</div>
+      <div class="kpi-value" id="kpiLiderValor" style="font-size: 1.55rem; line-height: 1.15;">—</div>
+      <div class="kpi-delta neutral" id="kpiLiderNombre" style="font-size: 0.75rem;">—</div>
+      <div class="kpi-desc">Mayor población estudiantil proyectada</div>
+      <div class="kpi-tooltip">Programa con el mayor número de estudiantes proyectados en la vigencia y nivel seleccionados.</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: #F5A623;">
+      <div class="kpi-label"><span class="dot"></span>Crecimiento horizonte</div>
+      <div class="kpi-value" id="kpiCrecimiento">—</div>
+      <div class="kpi-delta" id="kpiCrecDelta">—</div>
+      <div class="kpi-desc">Variación 2027-1 → 2035-2</div>
+      <div class="kpi-tooltip">Crecimiento porcentual y absoluto entre el inicio (2027-1) y el cierre (2035-2) del horizonte de planeación, para los filtros activos.</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: #9B59B6;">
+      <div class="kpi-label"><span class="dot"></span>Pico de matrícula</div>
+      <div class="kpi-value" id="kpiPico">—</div>
+      <div class="kpi-delta neutral" id="kpiPicoVigencia">—</div>
+      <div class="kpi-desc">Máximo histórico proyectado</div>
+      <div class="kpi-tooltip">Vigencia con la mayor cantidad de estudiantes proyectados dentro de los filtros aplicados.</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: #E74C3C;">
+      <div class="kpi-label"><span class="dot"></span>CAGR anualizado</div>
+      <div class="kpi-value" id="kpiCAGR">—</div>
+      <div class="kpi-delta neutral">Tasa compuesta semestral</div>
+      <div class="kpi-desc">Ritmo de expansión sostenido</div>
+      <div class="kpi-tooltip">Tasa de Crecimiento Anual Compuesta (CAGR) calculada sobre el horizonte completo. Mide el ritmo de expansión sostenido de la matrícula estudiantil.</div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       GRÁFICOS PRINCIPALES
+       ============================================================ -->
+  <h3 class="section-title reveal">Composición y Dinámica de la Población Estudiantil</h3>
+
+  <!-- Fila 1: Evolución temporal + Distribución -->
+  <section class="grid-2 reveal">
+
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Proyección semestral por nivel académico</div>
+          <div class="panel-subtitle">Áreas apiladas — composición de la matrícula estudiantil a lo largo del horizonte 2027 – 2035</div>
+        </div>
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
+        </div>
+      </div>
+      <div class="chart-container tall"><canvas id="chartEvolucion"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Distribución por nivel</div>
+          <div class="panel-subtitle">Participación porcentual en la vigencia activa</div>
+        </div>
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3 L12 12 L21 12"/></svg>
+        </div>
+      </div>
+      <div class="chart-container tall"><div id="chartDona"></div></div>
+    </div>
+
+  </section>
+
+  <!-- Fila 2: Radar + Crecimiento por nivel -->
+  <section class="grid-2-eq reveal">
+
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Perfil de composición — Inicio vs. Cierre</div>
+          <div class="panel-subtitle">Comparación entre primera vigencia (2027-1) y última (2035-2) por nivel</div>
+        </div>
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/></svg>
+        </div>
+      </div>
+      <div class="chart-container"><canvas id="chartRadar"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Crecimiento absoluto por nivel</div>
+          <div class="panel-subtitle">Aporte de cada nivel al crecimiento total 2027-1 → 2035-2</div>
+        </div>
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><polyline points="3 21 3 3 21 3"/><polyline points="7 17 11 13 15 16 20 8"/></svg>
+        </div>
+      </div>
+      <div class="chart-container"><div id="chartCascada"></div></div>
+    </div>
+
+  </section>
+
+  <!-- Fila 3: Top programas + Crecimiento programas -->
+  <section class="grid-2 reveal">
+
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Ranking — Top 10 programas (Vigencia activa)</div>
+          <div class="panel-subtitle">Programas con mayor población estudiantil proyectada</div>
+        </div>
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><path d="M5 21 V13 H10 V21 M14 21 V8 H19 V21 M3 21 H21"/></svg>
+        </div>
+      </div>
+      <div id="topPrograms" class="ranking"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Evolución de los programas líderes</div>
+          <div class="panel-subtitle">Trayectoria semestral — Top 5 al cierre 2035-2</div>
+        </div>
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 12 C 6 6, 9 18, 12 12 S 18 6, 21 12"/></svg>
+        </div>
+      </div>
+      <div class="chart-container tall"><canvas id="chartLideres"></canvas></div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       TABLA DETALLADA
+       ============================================================ -->
+  <h3 class="section-title reveal">Matriz Completa — Programa × Vigencia <span class="meta">heatmap de intensidad</span></h3>
+
+  <section class="panel reveal">
+    <div class="table-wrap">
+      <table class="pivot-table" id="pivotTable"></table>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       INSIGHTS NARRATIVOS
+       ============================================================ -->
+  <h3 class="section-title reveal">Insights Gerenciales <span class="meta">lectura ejecutiva</span></h3>
+
+  <section class="insights-grid reveal" id="insightsBox"></section>
+
+</main>
+
+<footer class="app-footer">
+  <p><strong>Dashboard de Proyección Estudiantil</strong> &middot; ETITC &middot; Elaborado por Coordinador Especializaciones — Wilson Ramiro Camargo Cardozo</p>
+  <p style="margin-top:4px; font-size: 0.7rem;">Fuente: Consolidado Proyección Estudiantil &middot; Horizonte 2027-1 a 2035-2 &middot; 18 vigencias semestrales</p>
+</footer>
+
+<!-- ============================================================
+     SCRIPT - LÓGICA DEL DASHBOARD
+     ============================================================ -->
+<script>
+/* ========================================================
+   1. DATOS - JSON EMBEBIDO (proveniente del Excel)
+   ======================================================== */
+const DATA = {"vigencias": ["2027-1", "2027-2", "2028-1", "2028-2", "2029-1", "2029-2", "2030-1", "2030-2", "2031-1", "2031-2", "2032-1", "2032-2", "2033-1", "2033-2", "2034-1", "2034-2", "2035-1", "2035-2"], "niveles": {"Técnico Profesional": {"color": "#3DB5AB", "programas": {"TÉCNICA PROFESIONAL EN CIENCIA DE DATOS APLICADA A LA IA": [60, 63, 67, 70, 74, 78, 81, 85, 88, 92, 95, 99, 102, 106, 109, 113, 116, 120], "TÉCNICA PROFESIONAL EN PROGRAMACIÓN PARA INTELIGENCIA ARTIFICIAL": [60, 63, 67, 70, 74, 78, 81, 85, 88, 92, 95, 99, 102, 106, 109, 113, 116, 120], "TÉCNICA PROFESIONAL EN MECANIZACIÓN AGRÍCOLA": [0, 66, 67, 68, 70, 72, 73, 75, 77, 79, 82, 84, 86, 89, 91, 94, 97, 100], "TÉCNICA PROFESIONAL EN MEDICIÓN DEL IMPACTO AMBIENTAL": [64, 65, 67, 68, 70, 71, 73, 75, 77, 79, 81, 83, 86, 88, 91, 93, 96, 99], "TÉCNICA PROFESIONAL DE MANTENIMIENTO EN ENERGÍAS RENOVABLES (A DISTANCIA)": [67, 65, 62, 59, 56, 52, 48, 43, 38, 33, 27, 21, 14, 18, 16, 17, 16, 16], "TECNICA PROFESIONAL EN ELECTRÓNICA INDUSTRIAL (SUBA)": [33, 34, 35, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48, 49, 50, 51, 52], "TÉCNICA PROFESIONAL EN COMPUTACIÓN (SUBA)": [33, 34, 35, 35, 35, 35, 35, 35, 34, 34, 33, 32, 31, 30, 28, 27, 25, 23]}, "total_por_vigencia": [318, 391, 401, 407, 417, 426, 432, 439, 445, 453, 458, 464, 468, 484, 493, 507, 518, 531]}, "Tecnológico": {"color": "#4A90D9", "programas": {"TECNOLOGÍA EN SANEAMIENTO AMBIENTAL": [0, 0, 0, 0, 58, 58, 58, 58, 58, 59, 59, 60, 61, 61, 62, 63, 64, 65], "TECNOLOGÍA EN MANEJO Y CONSERVACIÓN DE SUELOS Y AGUAS": [0, 0, 0, 0, 59, 61, 63, 65, 68, 70, 73, 76, 79, 82, 85, 88, 92, 95], "TECNOLOGÍA EN PROGRAMACIÓN DE SOLUCIONES CON INTELIGENCIA ARTIFICIAL": [60, 63, 67, 70, 74, 78, 81, 85, 88, 92, 95, 99, 102, 106, 109, 113, 116, 120], "TECNOLOGÍA EN ANÁLISIS Y MODELADO DE DATOS CON INTELIGENCIA ARTIFICIAL": [60, 63, 67, 70, 74, 78, 81, 85, 88, 92, 95, 99, 102, 106, 109, 113, 116, 120], "TECNOLOGÍA EN INSTALACIONES DE APROVECHAMIENTO ENERGÉTICO (A DISTANCIA)": [0, 0, 0, 57, 59, 62, 64, 66, 69, 71, 73, 76, 78, 80, 83, 85, 88, 90], "TECNOLOGIA EN AUTOMATIZACIÓN INDUSTRIAL (SUBA)": [0, 0, 0, 0, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47], "TECNOLOGIA EN DESARROLLO DE SOFTWARE (SUBA)": [33, 34, 35, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48, 49, 50, 51, 52]}, "total_por_vigencia": [153, 160, 169, 234, 396, 411, 423, 437, 451, 466, 480, 497, 511, 526, 541, 557, 573, 590]}, "Profesional Universitario": {"color": "#F5A623", "programas": {"INGENIERÍA EN CIENCIA DE DATOS": [0, 69, 79, 90, 103, 116, 130, 145, 161, 178, 196, 215, 235, 256, 278, 301, 325, 349], "INGENIERÍA EN INTELIGENCIA ARTIFICIAL": [69, 79, 90, 103, 116, 130, 145, 161, 178, 196, 215, 235, 256, 278, 301, 325, 349, 375], "INGENIERÍA EN ROBÓTICA E INTELIGENCIA ARTIFICIAL": [58, 64, 71, 78, 85, 93, 101, 109, 118, 127, 136, 146, 156, 166, 177, 188, 200, 212], "INGENIERÍA EN ENERGÍAS RENOVABLES (A DISTANCIA)": [0, 0, 0, 0, 0, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60, 61, 61, 62], "INGENIERÍA AGRICOLA (A DISTANCIA)": [0, 0, 0, 58, 58, 58, 57, 56, 55, 54, 53, 51, 49, 47, 44, 41, 38, 35], "INGENIERÍA AMBIENTAL (A DISTANCIA)": [0, 0, 0, 56, 47, 38, 29, 19, 24, 22, 23, 22, 22, 22, 22, 22, 22, 22], "INGENIERIA MECATRONICA (SUBA)": [0, 0, 0, 0, 0, 0, 32, 33, 34, 35, 36, 37, 37, 38, 39, 40, 41, 42], "INGENIERIA DE SISTEMAS (SUBA)": [0, 0, 0, 0, 0, 0, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]}, "total_por_vigencia": [127, 212, 240, 385, 409, 491, 586, 617, 665, 708, 756, 806, 857, 911, 966, 1024, 1083, 1144]}, "Especialización": {"color": "#9B59B6", "programas": {"ESPECIALIZACIÓN EN SOLUCIONES DE INTELIGENCIA ARTIFICIAL EN INGENIERÍA": [63, 67, 72, 77, 83, 89, 96, 103, 110, 118, 126, 135, 144, 153, 163, 173, 184, 195], "ESPECIALIZACIÓN EN SISTEMAS AUTÓNOMOS": [0, 63, 67, 72, 77, 83, 89, 96, 103, 110, 118, 126, 135, 144, 153, 163, 173, 184], "ESPECIALIZACIÓN EN GESTIÓN DE PROYECTOS DE INTELIGENCIA ARTIFICIAL": [0, 0, 0, 63, 67, 72, 77, 83, 89, 96, 103, 110, 118, 126, 135, 144, 153, 163], "ESPECIALIZACIÓN EN ÉTICA Y GOBERNANZA DE LA INTELIGENCIA ARTIFICIAL": [0, 0, 0, 0, 0, 63, 67, 72, 77, 83, 89, 96, 103, 110, 118, 126, 135, 144]}, "total_por_vigencia": [63, 130, 139, 212, 227, 307, 329, 354, 379, 407, 436, 467, 500, 533, 569, 606, 645, 686]}, "Maestría": {"color": "#E74C3C", "programas": {"MAESTRÍA EN INTELIGENCIA ARTIFICIAL": [0, 63, 67, 72, 77, 83, 89, 96, 103, 110, 118, 126, 135, 144, 153, 163, 173, 184], "MAESTRÍA EN CIENCIA DE DATOS": [0, 0, 0, 63, 67, 72, 77, 83, 89, 96, 103, 110, 118, 126, 135, 144, 153, 163]}, "total_por_vigencia": [0, 63, 67, 135, 144, 155, 166, 179, 192, 206, 221, 236, 253, 270, 288, 307, 326, 347]}, "Doctorado": {"color": "#34495E", "programas": {"DOCTORADO EN INTELIGENCIA ARTIFICIAL": [0, 0, 0, 0, 0, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 11, 11], "DOCTORADO EN ÉTICA Y GOBERNANZA DE LA INTELIGENCIA ARTIFICIAL": [0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9]}, "total_por_vigencia": [0, 0, 0, 0, 0, 5, 5, 6, 11, 12, 13, 14, 15, 16, 17, 18, 20, 20]}}, "total_general_por_vigencia": [661, 956, 1016, 1373, 1593, 1795, 1941, 2032, 2143, 2252, 2364, 2484, 2604, 2740, 2874, 3019, 3165, 3318]};
+
+/* Atajos */
+const VIGENCIAS = DATA.vigencias;
+const NIVELES   = DATA.niveles;
+const NIVEL_NAMES = Object.keys(NIVELES);
+
+/* Paleta consistente */
+const NIVEL_COLORS = {};
+NIVEL_NAMES.forEach(n => NIVEL_COLORS[n] = NIVELES[n].color);
+
+/* ========================================================
+   2. UTILIDADES
+   ======================================================== */
+const fmtNum = (n) => new Intl.NumberFormat('es-CO').format(Math.round(n));
+const fmtPct = (n, d=1) => (n*100).toFixed(d).replace('.', ',') + '%';
+
+/** Resuelve los programas (y sus series) según el filtro de nivel.
+ *  Si nivelFiltro === '__ALL__' devuelve todos los programas. */
+function getProgramsByNivel(nivelFiltro) {
+  const result = []; // [{nivel, color, name, values:[]}]
+  const pickNiveles = (nivelFiltro === '__ALL__') ? NIVEL_NAMES : [nivelFiltro];
+  pickNiveles.forEach(nivel => {
+    Object.entries(NIVELES[nivel].programas).forEach(([prog, vals]) => {
+      result.push({ nivel, color: NIVELES[nivel].color, name: prog, values: vals });
+    });
+  });
+  return result;
+}
+
+/** Total por vigencia agregando los niveles seleccionados */
+function getTotalByVigencia(nivelFiltro) {
+  if (nivelFiltro === '__ALL__') return DATA.total_general_por_vigencia.slice();
+  return NIVELES[nivelFiltro].total_por_vigencia.slice();
+}
+
+/** Filtra duro: índice de vigencia */
+const vigenciaIdx = (v) => VIGENCIAS.indexOf(v);
+
+/* ========================================================
+   3. ESTADO GLOBAL
+   ======================================================== */
+const state = {
+  vigencia: VIGENCIAS[VIGENCIAS.length - 1], // por defecto, vigencia final
+  nivel: '__ALL__'
+};
+
+/* ========================================================
+   4. RENDER - FILTROS
+   ======================================================== */
+function buildFilters() {
+  // Select de vigencias
+  const sel = document.getElementById('filterVigencia');
+  VIGENCIAS.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = v;
+    if (v === state.vigencia) o.selected = true;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', e => { state.vigencia = e.target.value; renderAll(); });
+
+  // Chips de niveles
+  const chipBox = document.getElementById('filterNivel');
+  NIVEL_NAMES.forEach(n => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.dataset.nivel = n;
+    b.textContent = n;
+    b.style.setProperty('--chip-c', NIVEL_COLORS[n]);
+    chipBox.appendChild(b);
+  });
+  chipBox.addEventListener('click', e => {
+    if (!e.target.matches('.chip')) return;
+    chipBox.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    e.target.classList.add('active');
+    state.nivel = e.target.dataset.nivel;
+    renderAll();
+  });
+}
+
+/* ========================================================
+   5. RENDER - KPIs
+   ======================================================== */
+function renderKPIs() {
+  const idx = vigenciaIdx(state.vigencia);
+  const idxStart = 0;
+  const idxEnd   = VIGENCIAS.length - 1;
+
+  // Total estudiantes en vigencia activa
+  const totalsTime = getTotalByVigencia(state.nivel);
+  const totalActual = totalsTime[idx];
+  document.getElementById('kpiTotalEstudiantes').innerHTML =
+    `${fmtNum(totalActual)}<span class="kpi-unit"> estudiantes</span>`;
+
+  // Delta vs vigencia anterior
+  if (idx > 0) {
+    const prev = totalsTime[idx - 1];
+    const delta = totalActual - prev;
+    const pct = prev > 0 ? (delta/prev) : 0;
+    document.getElementById('kpiTotalDelta').innerHTML =
+      `${delta >= 0 ? '▲' : '▼'} ${fmtNum(Math.abs(delta))} (${fmtPct(Math.abs(pct))}) vs ${VIGENCIAS[idx-1]}`;
+    document.getElementById('kpiTotalDelta').style.color = delta >= 0 ? 'var(--accent-neon)' : 'var(--accent-red)';
+  } else {
+    document.getElementById('kpiTotalDelta').textContent = 'Vigencia base del horizonte';
+    document.getElementById('kpiTotalDelta').classList.add('neutral');
+  }
+
+  // Programas activos
+  const progs = getProgramsByNivel(state.nivel);
+  const activos = progs.filter(p => (p.values[idx] || 0) > 0).length;
+  document.getElementById('kpiProgramas').innerHTML = `${activos}<span class="kpi-unit"> / ${progs.length}</span>`;
+  document.getElementById('kpiProgramasDesc').textContent = `de ${progs.length} programas en el portafolio`;
+
+  // Programa líder
+  const ranking = progs.map(p => ({...p, v: p.values[idx] || 0}))
+                       .filter(p => p.v > 0)
+                       .sort((a,b) => b.v - a.v);
+  if (ranking.length) {
+    const lider = ranking[0];
+    document.getElementById('kpiLiderValor').textContent = lider.name.length > 50 ? lider.name.slice(0, 48) + '…' : lider.name;
+    document.getElementById('kpiLiderValor').style.fontSize = '0.95rem';
+    document.getElementById('kpiLiderNombre').innerHTML = `<strong style="color:${lider.color}">${fmtNum(lider.v)} estudiantes</strong> &middot; ${lider.nivel}`;
+  } else {
+    document.getElementById('kpiLiderValor').textContent = '—';
+    document.getElementById('kpiLiderNombre').textContent = 'Sin datos para esta selección';
+  }
+
+  // Crecimiento horizonte 2027-1 → 2035-2
+  const tStart = totalsTime[idxStart];
+  const tEnd   = totalsTime[idxEnd];
+  if (tStart > 0) {
+    const crec = (tEnd - tStart) / tStart;
+    document.getElementById('kpiCrecimiento').innerHTML = `${(crec*100).toFixed(0).replace('.',',')}<span class="kpi-unit">%</span>`;
+    document.getElementById('kpiCrecDelta').innerHTML = `+${fmtNum(tEnd - tStart)} estudiantes (${tStart} → ${tEnd})`;
+  } else {
+    document.getElementById('kpiCrecimiento').textContent = '—';
+    document.getElementById('kpiCrecDelta').textContent = 'Nivel inicia con 0 en 2027-1';
+  }
+
+  // Pico
+  const pico = Math.max(...totalsTime);
+  const picoIdx = totalsTime.indexOf(pico);
+  document.getElementById('kpiPico').innerHTML = `${fmtNum(pico)}<span class="kpi-unit"> estudiantes</span>`;
+  document.getElementById('kpiPicoVigencia').textContent = `Vigencia ${VIGENCIAS[picoIdx]}`;
+
+  // CAGR semestral compuesto -> anualizado
+  if (tStart > 0 && tEnd > 0) {
+    const periods = idxEnd - idxStart;       // semestres
+    const cagrSemestral = Math.pow(tEnd/tStart, 1/periods) - 1;
+    const cagrAnual = Math.pow(1 + cagrSemestral, 2) - 1;
+    document.getElementById('kpiCAGR').innerHTML = `${(cagrAnual*100).toFixed(1).replace('.',',')}<span class="kpi-unit">%</span>`;
+  } else {
+    document.getElementById('kpiCAGR').textContent = '—';
+  }
+}
+
+/* ========================================================
+   6. CHART 1 - EVOLUCIÓN APILADA (Chart.js)
+   ======================================================== */
+let chartEvolInstance = null;
+function renderEvolucion() {
+  const ctx = document.getElementById('chartEvolucion');
+  if (chartEvolInstance) chartEvolInstance.destroy();
+
+  // Datasets: si filtro = ALL -> uno por nivel; si filtro = un nivel -> programas de ese nivel
+  let datasets;
+  if (state.nivel === '__ALL__') {
+    datasets = NIVEL_NAMES.map(n => ({
+      label: n,
+      data: NIVELES[n].total_por_vigencia,
+      backgroundColor: NIVEL_COLORS[n] + '99',
+      borderColor: NIVEL_COLORS[n],
+      borderWidth: 2,
+      fill: true,
+      tension: 0.35,
+      pointRadius: 0,
+      pointHoverRadius: 5
+    }));
+  } else {
+    const progs = Object.entries(NIVELES[state.nivel].programas);
+    // genera variaciones de color a partir del color del nivel
+    const baseColor = NIVEL_COLORS[state.nivel];
+    datasets = progs.map(([prog, vals], i) => ({
+      label: prog,
+      data: vals,
+      backgroundColor: baseColor + (60 + i*15).toString(16),
+      borderColor: baseColor,
+      borderWidth: 2,
+      fill: true,
+      tension: 0.35,
+      pointRadius: 0
+    }));
+  }
+
+  chartEvolInstance = new Chart(ctx, {
+    type: 'line',
+    data: { labels: VIGENCIAS, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#c5cae0', font: { family: 'Outfit', size: 11 }, usePointStyle: true, padding: 14, boxWidth: 8 }
+        },
+        tooltip: {
+          backgroundColor: '#0a0d1c',
+          borderColor: '#39FF14',
+          borderWidth: 1,
+          padding: 14,
+          titleFont: { family: 'Outfit', size: 13, weight: 700 },
+          bodyFont: { family: 'JetBrains Mono', size: 12 },
+          callbacks: {
+            label: (ctx) => ` ${ctx.dataset.label}: ${fmtNum(ctx.parsed.y)} estudiantes`,
+            footer: (items) => {
+              const total = items.reduce((s,i) => s + (i.parsed.y || 0), 0);
+              return 'Total: ' + fmtNum(total) + ' estudiantes';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#8590b3', font: { family: 'JetBrains Mono', size: 10 } }
+        },
+        y: {
+          stacked: true,
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#8590b3', font: { family: 'JetBrains Mono', size: 10 }, callback: (v) => fmtNum(v) }
+        }
+      },
+      animation: { duration: 900, easing: 'easeOutCubic' }
+    }
+  });
+}
+
+/* ========================================================
+   7. CHART 2 - DONA (ApexCharts)
+   ======================================================== */
+let donaInstance = null;
+function renderDona() {
+  const idx = vigenciaIdx(state.vigencia);
+  let labels, series, colors;
+  if (state.nivel === '__ALL__') {
+    labels = NIVEL_NAMES;
+    series = NIVEL_NAMES.map(n => NIVELES[n].total_por_vigencia[idx]);
+    colors = NIVEL_NAMES.map(n => NIVEL_COLORS[n]);
+  } else {
+    const progs = Object.entries(NIVELES[state.nivel].programas);
+    labels = progs.map(p => p[0]);
+    series = progs.map(p => p[1][idx] || 0);
+    const base = NIVEL_COLORS[state.nivel];
+    colors = progs.map((_, i) => shadeColor(base, -25 + i * 12));
+  }
+
+  const opts = {
+    chart: { type: 'donut', height: 380, foreColor: '#c5cae0', fontFamily: 'Outfit',
+             animations: { enabled: true, speed: 800, animateGradually: { enabled: true } } },
+    series, labels, colors,
+    stroke: { width: 2, colors: ['#0f1424'] },
+    legend: { position: 'bottom', fontSize: '12px', labels: { colors: '#c5cae0' }, markers: { width: 10, height: 10 },
+              formatter: (lbl, opts) => {
+                const trim = lbl.length > 36 ? lbl.slice(0,34) + '…' : lbl;
+                return trim + ' — ' + fmtNum(opts.w.globals.series[opts.seriesIndex]);
+              }
+    },
+    plotOptions: {
+      pie: { donut: { size: '70%', labels: { show: true,
+              name: { show: true, color: '#c5cae0', fontSize: '13px', offsetY: 4 },
+              value: { show: true, color: '#ffffff', fontSize: '28px', fontWeight: 700, formatter: (v) => fmtNum(v) },
+              total: { show: true, label: 'Total', color: '#39FF14', fontSize: '12px', formatter: (w) =>
+                fmtNum(w.globals.seriesTotals.reduce((a,b) => a+b, 0)) }
+      } } }
+    },
+    tooltip: { theme: 'dark', y: { formatter: (v) => fmtNum(v) + ' estudiantes' } },
+    dataLabels: { enabled: false }
+  };
+
+  if (donaInstance) donaInstance.destroy();
+  donaInstance = new ApexCharts(document.querySelector('#chartDona'), opts);
+  donaInstance.render();
+}
+
+/** Helper: aclarar/oscurecer un color hex en N% */
+function shadeColor(color, percent) {
+  let R = parseInt(color.substring(1,3), 16);
+  let G = parseInt(color.substring(3,5), 16);
+  let B = parseInt(color.substring(5,7), 16);
+  R = Math.min(255, Math.max(0, Math.round(R * (100 + percent) / 100)));
+  G = Math.min(255, Math.max(0, Math.round(G * (100 + percent) / 100)));
+  B = Math.min(255, Math.max(0, Math.round(B * (100 + percent) / 100)));
+  return '#' + R.toString(16).padStart(2,'0') + G.toString(16).padStart(2,'0') + B.toString(16).padStart(2,'0');
+}
+
+/* ========================================================
+   8. CHART 3 - RADAR (Chart.js)
+   ======================================================== */
+let radarInstance = null;
+function renderRadar() {
+  const ctx = document.getElementById('chartRadar');
+  if (radarInstance) radarInstance.destroy();
+
+  const labels = NIVEL_NAMES;
+  const dInicio = NIVEL_NAMES.map(n => NIVELES[n].total_por_vigencia[0]);
+  const dFin    = NIVEL_NAMES.map(n => NIVELES[n].total_por_vigencia[VIGENCIAS.length - 1]);
+
+  radarInstance = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [
+        { label: '2027-1 (Inicio)', data: dInicio,
+          backgroundColor: 'rgba(0, 153, 204, 0.15)',
+          borderColor: '#0099cc', borderWidth: 2, pointBackgroundColor: '#0099cc' },
+        { label: '2035-2 (Cierre)', data: dFin,
+          backgroundColor: 'rgba(57, 255, 20, 0.18)',
+          borderColor: '#39FF14', borderWidth: 2, pointBackgroundColor: '#39FF14' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#c5cae0', font: { family: 'Outfit' }, usePointStyle: true } },
+        tooltip: {
+          backgroundColor: '#0a0d1c', borderColor: '#39FF14', borderWidth: 1,
+          callbacks: { label: (c) => ` ${c.dataset.label}: ${fmtNum(c.parsed.r)} estudiantes` }
+        }
+      },
+      scales: {
+        r: {
+          angleLines: { color: 'rgba(255,255,255,0.07)' },
+          grid: { color: 'rgba(255,255,255,0.07)' },
+          pointLabels: { color: '#c5cae0', font: { family: 'Outfit', size: 11, weight: 600 } },
+          ticks: { color: '#5a6285', backdropColor: 'transparent', font: { family: 'JetBrains Mono', size: 9 } }
+        }
+      }
+    }
+  });
+}
+
+/* ========================================================
+   9. CHART 4 - CASCADA / WATERFALL DE CRECIMIENTO (Apex)
+   ======================================================== */
+let cascadaInstance = null;
+function renderCascada() {
+  const idxEnd = VIGENCIAS.length - 1;
+  const data = NIVEL_NAMES.map(n => {
+    const dInicio = NIVELES[n].total_por_vigencia[0];
+    const dFin = NIVELES[n].total_por_vigencia[idxEnd];
+    return { nivel: n, crec: dFin - dInicio, color: NIVEL_COLORS[n] };
+  });
+
+  const opts = {
+    chart: { type: 'bar', height: 320, foreColor: '#c5cae0', fontFamily: 'Outfit', toolbar: { show: false },
+             animations: { enabled: true, speed: 800 } },
+    series: [{ name: 'Crecimiento absoluto', data: data.map(d => d.crec) }],
+    xaxis: {
+      categories: data.map(d => d.nivel),
+      labels: { style: { colors: '#8590b3', fontSize: '10px', fontFamily: 'Outfit' }, rotate: -20, hideOverlappingLabels: false }
+    },
+    yaxis: { labels: { formatter: (v) => fmtNum(v), style: { colors: '#8590b3', fontFamily: 'JetBrains Mono' } } },
+    plotOptions: { bar: { borderRadius: 6, columnWidth: '55%', distributed: true,
+                  dataLabels: { position: 'top' } } },
+    colors: data.map(d => d.color),
+    dataLabels: {
+      enabled: true,
+      formatter: (v) => '+' + fmtNum(v),
+      offsetY: -22,
+      style: { colors: ['#ffffff'], fontSize: '11px', fontWeight: 700, fontFamily: 'Outfit' }
+    },
+    legend: { show: false },
+    grid: { borderColor: 'rgba(255,255,255,0.05)', strokeDashArray: 4 },
+    tooltip: { theme: 'dark',
+      y: { formatter: (v) => fmtNum(v) + ' estudiantes adicionales' }
+    }
+  };
+
+  if (cascadaInstance) cascadaInstance.destroy();
+  cascadaInstance = new ApexCharts(document.querySelector('#chartCascada'), opts);
+  cascadaInstance.render();
+}
+
+/* ========================================================
+   10. RANKING TOP 10
+   ======================================================== */
+function renderTopPrograms() {
+  const idx = vigenciaIdx(state.vigencia);
+  const progs = getProgramsByNivel(state.nivel);
+  const ranking = progs.map(p => ({...p, v: p.values[idx] || 0}))
+                       .filter(p => p.v > 0)
+                       .sort((a,b) => b.v - a.v)
+                       .slice(0, 10);
+
+  const container = document.getElementById('topPrograms');
+  container.innerHTML = '';
+  if (ranking.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:30px;">Sin datos disponibles para esta selección.</div>';
+    return;
+  }
+  ranking.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'rank-item';
+    div.style.setProperty('--rank-color', r.color);
+    div.innerHTML = `
+      <div class="rank-num">${(i+1).toString().padStart(2,'0')}</div>
+      <div class="rank-body">
+        <div class="rank-name">${r.name}</div>
+        <div class="rank-meta"><span class="badge">${r.nivel}</span></div>
+      </div>
+      <div class="rank-value">${fmtNum(r.v)}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+/* ========================================================
+   11. CHART 5 - LÍNEAS LÍDERES (Chart.js)
+   ======================================================== */
+let lideresInstance = null;
+function renderLideres() {
+  const idxEnd = VIGENCIAS.length - 1;
+  const progs = getProgramsByNivel(state.nivel);
+  const top5 = progs.map(p => ({...p, v: p.values[idxEnd] || 0}))
+                    .sort((a,b) => b.v - a.v).slice(0,5);
+
+  const ctx = document.getElementById('chartLideres');
+  if (lideresInstance) lideresInstance.destroy();
+  lideresInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: VIGENCIAS,
+      datasets: top5.map((p, i) => ({
+        label: p.name.length > 50 ? p.name.slice(0, 48) + '…' : p.name,
+        data: p.values,
+        borderColor: p.color,
+        backgroundColor: p.color + '22',
+        borderWidth: 2.5,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 6,
+        fill: false
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'nearest', intersect: false, axis: 'x' },
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#c5cae0', font: { family: 'Outfit', size: 10 }, usePointStyle: true, boxWidth: 8, padding: 10 } },
+        tooltip: {
+          backgroundColor: '#0a0d1c', borderColor: '#39FF14', borderWidth: 1, padding: 14,
+          callbacks: { label: (c) => ` ${fmtNum(c.parsed.y)} estudiantes` }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8590b3', font: { family: 'JetBrains Mono', size: 9 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8590b3', font: { family: 'JetBrains Mono', size: 10 }, callback: (v) => fmtNum(v) } }
+      },
+      animation: { duration: 800 }
+    }
+  });
+}
+
+/* ========================================================
+   12. TABLA PIVOT (programa × vigencia)
+   ======================================================== */
+function renderPivotTable() {
+  const tbl = document.getElementById('pivotTable');
+  // header
+  const colsHeader = '<tr><th>Programa / Vigencia</th>' +
+    VIGENCIAS.map(v => `<th>${v}</th>`).join('') +
+    `<th style="color:var(--accent-neon);">${state.vigencia} (activa)</th></tr>`;
+
+  const activeIdx = vigenciaIdx(state.vigencia);
+  // recolectar max para heatmap
+  let allValues = [];
+  NIVEL_NAMES.forEach(n => Object.values(NIVELES[n].programas).forEach(arr => allValues.push(...arr)));
+  const maxV = Math.max(...allValues);
+
+  function heatClass(v) {
+    if (v === 0) return 'cell-empty';
+    const r = v / maxV;
+    if (r > 0.8) return 'cell-heat-5';
+    if (r > 0.55) return 'cell-heat-4';
+    if (r > 0.3) return 'cell-heat-3';
+    if (r > 0.12) return 'cell-heat-2';
+    return 'cell-heat-1';
+  }
+
+  let body = '';
+  NIVEL_NAMES.forEach(nivel => {
+    // si se ha filtrado, omitir niveles no seleccionados
+    if (state.nivel !== '__ALL__' && nivel !== state.nivel) return;
+
+    body += `<tr class="nivel-header"><td colspan="${VIGENCIAS.length + 2}">${nivel}</td></tr>`;
+    Object.entries(NIVELES[nivel].programas).forEach(([prog, vals]) => {
+      let cells = '';
+      vals.forEach((v, i) => {
+        const cls = heatClass(v);
+        const active = (i === activeIdx) ? ' style="outline:2px solid var(--accent-neon); outline-offset:-2px;"' : '';
+        cells += `<td class="${cls}"${active}>${v === 0 ? '—' : fmtNum(v)}</td>`;
+      });
+      cells += `<td style="background: rgba(57,255,20,0.10); color: var(--accent-neon); font-weight: 700;">${fmtNum(vals[activeIdx] || 0)}</td>`;
+      body += `<tr><td>${prog}</td>${cells}</tr>`;
+    });
+    // Total del nivel
+    const totals = NIVELES[nivel].total_por_vigencia;
+    let tc = '';
+    totals.forEach((v, i) => {
+      const active = (i === activeIdx) ? ' style="outline:2px solid var(--accent-neon); outline-offset:-2px;"' : '';
+      tc += `<td${active}>${fmtNum(v)}</td>`;
+    });
+    tc += `<td style="background: rgba(57,255,20,0.18); color: #fff;">${fmtNum(totals[activeIdx])}</td>`;
+    body += `<tr class="total-row"><td>Total ${nivel}</td>${tc}</tr>`;
+  });
+
+  // Total general
+  if (state.nivel === '__ALL__') {
+    let tc = '';
+    DATA.total_general_por_vigencia.forEach((v, i) => {
+      const active = (i === activeIdx) ? ' style="outline:2px solid var(--accent-neon); outline-offset:-2px;"' : '';
+      tc += `<td${active} style="color: var(--accent-neon);">${fmtNum(v)}</td>`;
+    });
+    tc += `<td style="background: var(--accent-neon); color: #0a0d1c;">${fmtNum(DATA.total_general_por_vigencia[activeIdx])}</td>`;
+    body += `<tr class="total-row" style="background: rgba(57,255,20,0.05);"><td style="color: var(--accent-neon);">TOTAL GENERAL ETITC</td>${tc}</tr>`;
+  }
+
+  tbl.innerHTML = '<thead>' + colsHeader + '</thead><tbody>' + body + '</tbody>';
+}
+
+/* ========================================================
+   13. INSIGHTS NARRATIVOS
+   ======================================================== */
+function renderInsights() {
+  const box = document.getElementById('insightsBox');
+  box.innerHTML = '';
+  const idx = vigenciaIdx(state.vigencia);
+  const totals = getTotalByVigencia(state.nivel);
+  const tStart = totals[0], tEnd = totals[totals.length-1];
+  const tActual = totals[idx];
+
+  // Insight 1: composición dominante en vigencia activa
+  let dominante = NIVEL_NAMES[0], maxV = 0;
+  NIVEL_NAMES.forEach(n => {
+    const v = NIVELES[n].total_por_vigencia[idx];
+    if (v > maxV) { maxV = v; dominante = n; }
+  });
+  const totalAll = DATA.total_general_por_vigencia[idx];
+  const pctDom = totalAll > 0 ? (maxV / totalAll) : 0;
+
+  const insights = [
+    {
+      lbl: `Vigencia ${state.vigencia}`,
+      txt: `El nivel <strong>${dominante}</strong> concentra la mayor matrícula estudiantil con <strong>${fmtNum(maxV)} estudiantes</strong>, equivalente al <strong>${fmtPct(pctDom)}</strong> del total ETITC.`,
+      color: NIVEL_COLORS[dominante]
+    },
+    {
+      lbl: 'Horizonte de planeación',
+      txt: tStart > 0
+        ? `La matrícula proyectada pasa de <strong>${fmtNum(tStart)}</strong> estudiantes en 2027-1 a <strong>${fmtNum(tEnd)}</strong> en 2035-2, un crecimiento de <strong>${((tEnd-tStart)/tStart*100).toFixed(0)}%</strong> sostenido en ${VIGENCIAS.length-1} semestres.`
+        : `Este nivel inicia su operación posterior a 2027-1, alcanzando <strong>${fmtNum(tEnd)} estudiantes</strong> al cierre 2035-2.`,
+      color: '#39FF14'
+    },
+    {
+      lbl: 'Diversificación del portafolio',
+      txt: `El portafolio académico contempla <strong>${Object.values(NIVELES).reduce((a,n)=>a+Object.keys(n.programas).length,0)} programas</strong> distribuidos en <strong>${NIVEL_NAMES.length} niveles de formación</strong>, desde Técnico Profesional hasta Doctorado.`,
+      color: '#0099cc'
+    },
+    {
+      lbl: 'Foco estratégico IA',
+      txt: `La oferta institucional muestra un viraje decisivo hacia la <strong>Inteligencia Artificial y Ciencia de Datos</strong> — los programas líderes al cierre del horizonte pertenecen a estas áreas, reflejando la apuesta por la pertinencia tecnológica.`,
+      color: '#F5A623'
+    },
+    {
+      lbl: 'Implicación de talento humano',
+      txt: `Pasar de <strong>${fmtNum(DATA.total_general_por_vigencia[0])}</strong> a <strong>${fmtNum(DATA.total_general_por_vigencia[VIGENCIAS.length-1])}</strong> estudiantes requerirá una estrategia robusta de <strong>vinculación, formación y retención del talento</strong> a lo largo de la próxima década.`,
+      color: '#9B59B6'
+    },
+    {
+      lbl: 'Programas emergentes',
+      txt: `Los niveles <strong>Maestría</strong> y <strong>Doctorado</strong> aparecen progresivamente en el horizonte, marcando la consolidación de la <strong>identidad como Escuela Tecnológica con vocación universitaria</strong>.`,
+      color: '#E74C3C'
+    }
+  ];
+
+  insights.forEach(ins => {
+    const div = document.createElement('div');
+    div.className = 'insight';
+    div.style.setProperty('--ins-color', ins.color);
+    div.innerHTML = `<span class="lbl">${ins.lbl}</span>${ins.txt}`;
+    box.appendChild(div);
+  });
+}
+
+/* ========================================================
+   14. RENDER COMPLETO
+   ======================================================== */
+function renderAll() {
+  renderKPIs();
+  renderEvolucion();
+  renderDona();
+  renderRadar();
+  renderCascada();
+  renderTopPrograms();
+  renderLideres();
+  renderPivotTable();
+  renderInsights();
+}
+
+/* ========================================================
+   15. INICIO
+   ======================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  buildFilters();
+  renderAll();
+});
+</script>
+
+</body>
+</html>
